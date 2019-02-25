@@ -12,7 +12,6 @@
  * 
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -29,7 +28,7 @@
 #define STD_ERR 2
 #define READ 0
 #define WRITE 1
-#define ARG_MAX 2000
+#define MAX_ARG 2000
 
 /* 
  * void errorH(int error)
@@ -91,9 +90,14 @@ void errorH(int error)
         exit(EXIT_FAILURE);
         break;
 
+    case 8:
+        fprintf(stderr, "Closing Error | Error Number %d : %s \n", errno, strerror(errno));
+        exit(EXIT_FAILURE);
+        break;
+
     //Default error handler
     default:
-        fprintf(stderr, "Error | Error Number %d : %s \n", errno, strerror(errno));
+        fprintf(stderr, "Unknown Error | Error Number %d : %s \n", errno, strerror(errno));
         fprintf(stderr, "Interface: ./connect <arg1> : <arg2>\n");
         exit(EXIT_FAILURE);
         break;
@@ -111,8 +115,8 @@ int main(int argc, char const *argv[])
     int colonCount = 0;
     int colonLocation = 0;
 
-    char const *leftArg[ARG_MAX];
-    char const *rightArg[ARG_MAX];
+    const char *leftArg[MAX_ARG];
+    const char *rightArg[MAX_ARG];
 
     /* Parse in the provided arguments
      * look for colon seperator. Error check
@@ -199,7 +203,10 @@ int main(int argc, char const *argv[])
     // Child Process
     if (childPID == 0)
     {
-        close(STD_IN);
+        if (close(STD_IN) == -1)
+        {
+            errorH(8);
+        }
 
         //Duplicate the read stream
         if (dup(pipeFD[READ]) == -1)
@@ -208,11 +215,17 @@ int main(int argc, char const *argv[])
         }
 
         //Close the read and write descriptors
-        close(pipeFD[WRITE]);
-        close(pipeFD[READ]);
+        if (close(pipeFD[WRITE]) == -1)
+        {
+            errorH(8);
+        }
+        if (close(pipeFD[READ]) == -1)
+        {
+            errorH(8);
+        }
 
         //Execute argument 2, kill if any error
-        if (execvp(rightArg[0], rightArg) == -1)
+        if (execvp(rightArg[0], (char *)rightArg) == -1)
         {
             kill(childPID, SIGKILL);
             errorH(6);
@@ -221,7 +234,10 @@ int main(int argc, char const *argv[])
 
     else
     {
-        close(STD_OUT);
+        if (close(STD_OUT) == -1)
+        {
+            errorH(8);
+        }
 
         //Duplicate the write stream
         if (dup(pipeFD[WRITE]) == -1)
@@ -230,11 +246,17 @@ int main(int argc, char const *argv[])
         }
 
         //Close read and write file descriptors
-        close(pipeFD[READ]);
-        close(pipeFD[WRITE]);
+        if (close(pipeFD[READ]) == -1)
+        {
+            errorH(8);
+        }
+        if (close(pipeFD[WRITE]) == -1)
+        {
+            errorH(8);
+        }
 
         //Execute argument 1, kill if any error
-        if (execvp(leftArg[0], leftArg) == -1)
+        if (execvp(leftArg[0], (char *)leftArg) == -1)
         {
             kill(childPID, SIGKILL);
             errorH(6);
