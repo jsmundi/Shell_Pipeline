@@ -12,6 +12,7 @@
  * 
  */
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -20,6 +21,8 @@
 #include <string.h>
 #include <limits.h>
 
+#define _GNU_SOURCE
+#define _DEFAULT_SOURCE
 #define COLON ":"
 #define STD_IN 0
 #define STD_OUT 1
