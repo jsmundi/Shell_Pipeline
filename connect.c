@@ -19,6 +19,7 @@
 #include <errno.h>
 #include <string.h>
 #include <limits.h>
+#include <sys/types.h>
 
 #define _GNU_SOURCE
 #define _DEFAULT_SOURCE
