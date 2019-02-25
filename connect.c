@@ -225,7 +225,7 @@ int main(int argc, char const *argv[])
         }
 
         //Execute argument 2, kill if any error
-        if (execvp(rightArg[0], (char *)rightArg) == -1)
+        if (execvp(rightArg[0], rightArg) == -1)
         {
             kill(childPID, SIGKILL);
             errorH(6);
@@ -256,7 +256,7 @@ int main(int argc, char const *argv[])
         }
 
         //Execute argument 1, kill if any error
-        if (execvp(leftArg[0], (char *)leftArg) == -1)
+        if (execvp(leftArg[0], leftArg) == -1)
         {
             kill(childPID, SIGKILL);
             errorH(6);
