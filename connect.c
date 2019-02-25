@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <limits.h>
 
 #define COLON ":"
 #define STD_IN 0
@@ -105,8 +106,11 @@ int main(int argc, char const *argv[])
     int colonFlag = 0;
     int colonCount = 0;
     int colonLocation = 0;
-    int argOne = 1;
-    int argTwo = 0;
+    //int argOne = 1;
+    //int argTwo = 0;
+
+    const char *leftArg[ARG_MAX];
+    const char *rightArg[ARG_MAX];
 
     /* Parse in the provided arguments
      * look for colon seperator. Error check
@@ -118,7 +122,6 @@ int main(int argc, char const *argv[])
      */
     for (size_t i = 0; i < argc; i++)
     {
-
         //String compare for ":"
         if ((strcmp(argv[i], COLON) == 0))
         {
@@ -139,11 +142,31 @@ int main(int argc, char const *argv[])
 
             //Update colon index location
             colonLocation = i;
-            argTwo = i + 1;
+            //argTwo = i + 1;
             argv[i] = NULL;
         }
     }
 
+    int i = 0;
+    while (argv[i] != NULL)
+    {
+        leftArg[i] = argv[i];
+        //printf("%d %s\n", i, leftArg[i]);
+        ++i;
+    }
+    if (colonLocation != 0)
+    {
+        i = 1;
+        while (argv[i + colonLocation] != NULL)
+        {
+            rightArg[i-1] = argv[i + colonLocation];
+            //printf("%d %s\n", i, rightArg[i]);
+            ++i;
+        }
+    }
+
+    printf("Done"); 
+    
     int childPID;
     int pipeFD[2];
 
@@ -185,7 +208,7 @@ int main(int argc, char const *argv[])
         close(pipeFD[READ]);
 
         //Execute argument 2, kill if any error
-        if (execvp(argv[argTwo], &argv[argTwo]) == -1)
+        if (execvp(rightArg[0], rightArg) == -1)
         {
             kill(childPID, SIGKILL);
             errorH(6);
@@ -207,7 +230,7 @@ int main(int argc, char const *argv[])
         close(pipeFD[WRITE]);
 
         //Execute argument 1, kill if any error
-        if (execvp(argv[argOne], &argv[argOne]) == -1)
+        if (execvp(leftArg[0], leftArg) == -1)
         {
             kill(childPID, SIGKILL);
             errorH(6);
