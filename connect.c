@@ -29,6 +29,7 @@
 #define STD_ERR 2
 #define READ 0
 #define WRITE 1
+#define ARG_MAX 2000
 
 /* 
  * void errorH(int error)
