@@ -106,11 +106,9 @@ int main(int argc, char const *argv[])
     int colonFlag = 0;
     int colonCount = 0;
     int colonLocation = 0;
-    //int argOne = 1;
-    //int argTwo = 0;
 
-    const char *leftArg[ARG_MAX];
-    const char *rightArg[ARG_MAX];
+    char const *leftArg[ARG_MAX];
+    char const *rightArg[ARG_MAX];
 
     /* Parse in the provided arguments
      * look for colon seperator. Error check
@@ -142,31 +140,33 @@ int main(int argc, char const *argv[])
 
             //Update colon index location
             colonLocation = i;
-            //argTwo = i + 1;
             argv[i] = NULL;
         }
     }
 
-    int i = 0;
-    while (argv[i] != NULL)
+    /*
+     * Write left and right argumetns 
+     * into two seperate char arrays
+     */
+
+    int j = 0;
+    while (argv[j] != NULL)
     {
-        leftArg[i] = argv[i];
-        //printf("%d %s\n", i, leftArg[i]);
-        ++i;
+        leftArg[j] = argv[j + 1];
+        ++j;
     }
-    if (colonLocation != 0)
+    leftArg[j] = (char *)0;
+    if (colonFlag != 0)
     {
-        i = 1;
-        while (argv[i + colonLocation] != NULL)
+        j = 1;
+        while (argv[j + colonLocation] != NULL)
         {
-            rightArg[i-1] = argv[i + colonLocation];
-            //printf("%d %s\n", i, rightArg[i]);
-            ++i;
+            rightArg[j - 1] = argv[j + colonLocation];
+            ++j;
         }
+        rightArg[j] = (char *)0;
     }
 
-    printf("Done"); 
-    
     int childPID;
     int pipeFD[2];
 
