@@ -144,7 +144,7 @@ int main(int argc, char const *argv[])
         }
     }
 
-    pid_t childPID;
+    int childPID;
     int pipeFD[2];
 
     /* Pipe a new process pipeFD 
