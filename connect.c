@@ -8,7 +8,7 @@
  * Author: JT Mundi
  * 
  * Date Created: 02/22/19
- * Last Modified: 02/24/19
+ * Last Modified: 02/25/19
  * 
  */
 
@@ -115,8 +115,8 @@ int main(int argc, char const *argv[])
     int colonCount = 0;
     int colonLocation = 0;
 
-    const char *leftArg[MAX_ARG];
-    const char *rightArg[MAX_ARG];
+    char *leftArg[MAX_ARG];
+    char *rightArg[MAX_ARG];
 
     /* Parse in the provided arguments
      * look for colon seperator. Error check
@@ -160,7 +160,7 @@ int main(int argc, char const *argv[])
     int j = 0;
     while (argv[j] != NULL)
     {
-        leftArg[j] = argv[j + 1];
+        leftArg[j] = (char *)argv[j + 1];
         ++j;
     }
     leftArg[j] = (char *)0;
@@ -169,7 +169,7 @@ int main(int argc, char const *argv[])
         j = 1;
         while (argv[j + colonLocation] != NULL)
         {
-            rightArg[j - 1] = argv[j + colonLocation];
+            rightArg[j - 1] = (char *)argv[j + colonLocation];
             ++j;
         }
         rightArg[j] = (char *)0;
