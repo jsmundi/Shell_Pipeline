@@ -202,7 +202,7 @@ int main(int argc, char const *argv[])
             errorH(7);
         }
 
-        //Close read and write file descriptors 
+        //Close read and write file descriptors
         close(pipeFD[READ]);
         close(pipeFD[WRITE]);
 
