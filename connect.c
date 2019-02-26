@@ -191,81 +191,83 @@ int main(int argc, char const *argv[])
 
     /* 
      * Fork a new process
+     * if there is a colon
      * and set child pid.
      * Perform error check.
      */
-    if(colonFlag == 1)
+    if (colonFlag == 1)
     {
-    childPID = fork();
+        childPID = fork();
 
-    if (childPID == -1)
-    {
-        errorH(4);
+        if (childPID == -1)
+        {
+            errorH(4);
+        }
+
+        // Child Process
+        if (childPID == 0)
+        {
+            if (close(STD_IN) == -1)
+            {
+                errorH(8);
+            }
+
+            //Duplicate the read stream
+            if (dup(pipeFD[READ]) == -1)
+            {
+                errorH(7);
+            }
+
+            //Close the read and write descriptors
+            if (close(pipeFD[WRITE]) == -1)
+            {
+                errorH(8);
+            }
+            if (close(pipeFD[READ]) == -1)
+            {
+                errorH(8);
+            }
+
+            //Execute argument 2, kill if any error
+            if (execvp(rightArg[0], rightArg) == -1)
+            {
+
+                errorH(6);
+            }
+        }
+
+        else
+        {
+            if (close(STD_OUT) == -1)
+            {
+                errorH(8);
+            }
+
+            //Duplicate the write stream
+            if (dup(pipeFD[WRITE]) == -1)
+            {
+                errorH(7);
+            }
+
+            //Close read and write file descriptors
+            if (close(pipeFD[READ]) == -1)
+            {
+                errorH(8);
+            }
+            if (close(pipeFD[WRITE]) == -1)
+            {
+                errorH(8);
+            }
+
+            //Execute argument 1, kill if any error
+            if (execvp(leftArg[0], leftArg) == -1)
+            {
+                errorH(6);
+            }
+        }
     }
-
-    // Child Process
-    if (childPID == 0)
-    {
-        if (close(STD_IN) == -1)
-        {
-            errorH(8);
-        }
-
-        //Duplicate the read stream
-        if (dup(pipeFD[READ]) == -1)
-        {
-            errorH(7);
-        }
-
-        //Close the read and write descriptors
-        if (close(pipeFD[WRITE]) == -1)
-        {
-            errorH(8);
-        }
-        if (close(pipeFD[READ]) == -1)
-        {
-            errorH(8);
-        }
-
-        //Execute argument 2, kill if any error
-        if (execvp(rightArg[0], rightArg) == -1)
-        {
-
-            errorH(6);
-        }
-    }
-
     else
     {
-        if (close(STD_OUT) == -1)
-        {
-            errorH(8);
-        }
-
-        //Duplicate the write stream
-        if (dup(pipeFD[WRITE]) == -1)
-        {
-            errorH(7);
-        }
-
-        //Close read and write file descriptors
-        if (close(pipeFD[READ]) == -1)
-        {
-            errorH(8);
-        }
-        if (close(pipeFD[WRITE]) == -1)
-        {
-            errorH(8);
-        }
-
-        //Execute argument 1, kill if any error
-        if (execvp(leftArg[0], leftArg) == -1)
-        {
-            errorH(6);
-        }
-    }
-    }
-    else{
         if (execvp(leftArg[0], leftArg) == -1)
         {
             errorH(6);
