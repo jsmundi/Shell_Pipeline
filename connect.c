@@ -194,6 +194,8 @@ int main(int argc, char const *argv[])
      * and set child pid.
      * Perform error check.
      */
+    if(colonFlag == 1)
+    {
     childPID = fork();
 
     if (childPID == -1)
@@ -228,7 +230,7 @@ int main(int argc, char const *argv[])
         //Execute argument 2, kill if any error
         if (execvp(rightArg[0], rightArg) == -1)
         {
-            kill(childPID, SIGKILL);
+
             errorH(6);
         }
     }
@@ -259,7 +261,13 @@ int main(int argc, char const *argv[])
         //Execute argument 1, kill if any error
         if (execvp(leftArg[0], leftArg) == -1)
         {
-            kill(childPID, SIGKILL);
+            errorH(6);
+        }
+    }
+    }
+    else{
+        if (execvp(leftArg[0], leftArg) == -1)
+        {
             errorH(6);
         }
     }
